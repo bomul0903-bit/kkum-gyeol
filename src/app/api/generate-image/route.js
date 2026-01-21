@@ -2,17 +2,22 @@ import { NextResponse } from 'next/server';
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-const fetchWithRetry = async (url, options, retries = 5) => {
+const fetchWithRetry = async (url, options, retries = 3) => {
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url, options);
       if (response.ok) return await response.json();
+
+      const errorText = await response.text();
+      console.error(`Image API response error (${response.status}):`, errorText);
+
       if (response.status === 429 || response.status >= 500) {
         await sleep(Math.pow(2, i) * 1000);
         continue;
       }
       throw new Error(`API error: ${response.status}`);
     } catch (err) {
+      console.error(`Image attempt ${i + 1} failed:`, err.message);
       if (i === retries - 1) throw err;
       await sleep(Math.pow(2, i) * 1000);
     }

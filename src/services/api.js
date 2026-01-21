@@ -9,7 +9,9 @@ export const analyzeDream = async (dreamText) => {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to analyze dream');
+    const errorData = await response.json().catch(() => ({}));
+    console.error('Analyze API error:', errorData);
+    throw new Error(errorData.error || 'Failed to analyze dream');
   }
 
   return response.json();

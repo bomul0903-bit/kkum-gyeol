@@ -2,17 +2,22 @@ import { NextResponse } from 'next/server';
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-const fetchWithRetry = async (url, options, retries = 5) => {
+const fetchWithRetry = async (url, options, retries = 3) => {
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url, options);
       if (response.ok) return await response.json();
+
+      const errorText = await response.text();
+      console.error(`API response error (${response.status}):`, errorText);
+
       if (response.status === 429 || response.status >= 500) {
         await sleep(Math.pow(2, i) * 1000);
         continue;
       }
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`API error: ${response.status} - ${errorText}`);
     } catch (err) {
+      console.error(`Attempt ${i + 1} failed:`, err.message);
       if (i === retries - 1) throw err;
       await sleep(Math.pow(2, i) * 1000);
     }
@@ -65,7 +70,7 @@ export async function POST(request) {
     };
 
     const data = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
