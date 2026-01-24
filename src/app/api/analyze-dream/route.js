@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-const fetchWithRetry = async (url, options, retries = 3) => {
+const fetchWithRetry = async (url, options, retries = 5) => {
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url, options);
@@ -39,8 +39,10 @@ export async function POST(request) {
     }
 
     const systemInstruction = `꿈 분석 전문가 '꿈결'.
-    1. 분석(제목, 프로이트 해석, 일반 해석), 2. 핵심 상징 키워드 추출(2-5개), 3. 감정 수치 추출(기쁨/불안 지수 0-100).
-    연령 지칭 금지. 한국인 묘사(한복 제외). JSON 응답 필수.`;
+    1. 분석(제목, 프로이트 해석, 일반 해석).
+    2. 핵심 상징 키워드 추출: 꿈의 내용에서 가장 중요한 명사형 상징 2-5개를 추출하세요. 상징은 정규화하여 추출하세요 (예: '바다'와 '넓은 바다'는 모두 '바다'로 추출).
+    3. 5가지 정서 수치 측정: joy(기쁨), peace(평온), sadness(슬픔), vitality(활력), anxiety(불안)를 각 0-100 사이 숫자로 측정하세요.
+    [이미지 가이드]: 사용자가 '한복'을 명시하지 않는 한 절대로 한복을 그리지 마세요. 한국인 인물은 현대 패션으로 묘사하세요. JSON 응답 필수.`;
 
     const schema = {
       type: "OBJECT",
@@ -49,8 +51,17 @@ export async function POST(request) {
         freudInterpretation: { type: "STRING" },
         generalInterpretation: { type: "STRING" },
         symbols: { type: "ARRAY", items: { type: "STRING" }, minItems: 2, maxItems: 5 },
-        joyLevel: { type: "NUMBER" },
-        anxietyLevel: { type: "NUMBER" },
+        emotions: {
+          type: "OBJECT",
+          properties: {
+            joy: { type: "NUMBER" },
+            peace: { type: "NUMBER" },
+            sadness: { type: "NUMBER" },
+            vitality: { type: "NUMBER" },
+            anxiety: { type: "NUMBER" }
+          },
+          required: ["joy", "peace", "sadness", "vitality", "anxiety"]
+        },
         scenes: {
           type: "ARRAY",
           items: {
@@ -66,7 +77,7 @@ export async function POST(request) {
           maxItems: 1
         }
       },
-      required: ["title", "freudInterpretation", "generalInterpretation", "symbols", "scenes", "joyLevel", "anxietyLevel"]
+      required: ["title", "freudInterpretation", "generalInterpretation", "symbols", "scenes", "emotions"]
     };
 
     const data = await fetchWithRetry(

@@ -88,7 +88,8 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       const scenesWithImgs = [];
       const genderMod = profile?.gender === '여성' ? 'woman' : 'man';
       const scene = analysis.scenes[0];
-      const finalPrompt = `[STYLE: ${styleData.prompt}]. Subject: A Korean ${genderMod} in fashionable modern clothing in a dream scene: ${scene.imagePrompt}. Aesthetic masterpiece.`;
+      const topicContent = `${scene.imagePrompt} featuring a Korean ${genderMod} in stylish modern fashion (Strictly NO Hanbok unless requested in text: "${input}")`;
+      const finalPrompt = `${styleData.prompt}, ${topicContent}, high resolution, masterpiece, detailed`;
 
       const rawImg = await generateImage(finalPrompt);
       const compImg = await compressImage(rawImg, 800);

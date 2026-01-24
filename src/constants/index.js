@@ -14,13 +14,13 @@ export const SUBCONSCIOUS_QUOTES = [
 ];
 
 export const ART_STYLES = [
-  { id: 'watercolor', name: '수채화', premium: false, prompt: 'Professional watercolor illustration, ethereal dreamlike.' },
-  { id: 'oil_painting', name: '유화', premium: false, prompt: 'Classical oil painting, thick impasto texture.' },
-  { id: 'anime', name: '애니메이션', premium: false, prompt: 'High-end modern anime aesthetic, cinematic lighting.' },
-  { id: 'oriental', name: '동양화', premium: false, prompt: 'Traditional Korean Sumi-e ink wash style.' },
-  { id: 'abstract', name: '추상화', premium: true, prompt: 'Non-representational abstract expressionism.' },
-  { id: 'cyberpunk', name: '사이버펑크', premium: true, prompt: 'Futuristic cyberpunk noir, neon glow.' },
-  { id: 'lofi_retro', name: '로파이 레트로', premium: true, prompt: '90s nostalgic lo-fi anime mood.' },
-  { id: 'pop_art_3d', name: '3D 팝아트', premium: true, prompt: 'Modern 3D claymorphism style.' },
-  { id: 'surrealism', name: '초현실주의', premium: true, prompt: 'Surreal dream logic, impossible physics.' }
+  { id: 'watercolor', name: '수채화', prompt: 'watercolor painting, wet-on-wet, bleeding ink, soft edges, paper texture, delicate washes' },
+  { id: 'oil_painting', name: '유화', prompt: 'oil painting, thick impasto, visible brushstrokes, rich texture, heavy paint, classical lighting' },
+  { id: 'anime', name: '애니메이션', prompt: 'high-quality anime style, Makoto Shinkai aesthetic, vibrant colors, cinematic lighting, sharp outlines' },
+  { id: 'oriental', name: '동양화', prompt: 'traditional ink wash painting, Sumi-e style, Zen, negative space, elegant brushwork, rice paper texture' },
+  { id: 'abstract', name: '추상화', prompt: 'abstract expressionism, in the style of Wassily Kandinsky and Pablo Picasso, fluid organic shapes, emotional color palette, non-representational, layered textures' },
+  { id: 'cyberpunk', name: '사이버펑크', prompt: 'cyberpunk aesthetic, neon glow, futuristic city, night rain, teal and orange, glitch effects' },
+  { id: 'lofi_retro', name: '로파이 레트로', prompt: 'Lo-fi hip hop aesthetic, retro 80s/90s, grainy texture, muted nostalgic colors, cozy indoor vibe' },
+  { id: 'pop_art_3d', name: '3D 팝아트', prompt: '3D rendering, claymorphism, vibrant pop art colors, glossy finish, stylized characters, playful lighting' },
+  { id: 'surrealism', name: '초현실주의', prompt: 'surrealism, dreamlike logic, Salvador Dali style, floating objects, bizarre juxtaposition, impossible physics' }
 ];
