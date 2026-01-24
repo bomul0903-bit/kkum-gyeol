@@ -41,3 +41,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 imagen_test_code/
+gemini_App_jsx_code/
