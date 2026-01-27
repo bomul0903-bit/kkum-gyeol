@@ -116,13 +116,13 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
 
   if (phase === 'analyzing' || phase === 'generating') {
     return (
-      <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-4 w-full">
+      <div className="min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex flex-col items-center justify-center text-center px-4 w-full">
         <KkumGyeolLogo className="w-32 h-32 animate-pulse mb-16" />
         <div className="space-y-10 max-w-sm">
           <h2 className="text-3xl font-serif text-white font-black">
             {phase === 'analyzing' ? '꿈의 심연을 분석 중...' : '장면 시각화 중'}
           </h2>
-          <div className="glass-panel p-8 rounded-[3rem] animate-in fade-in duration-1000 min-h-[160px] flex flex-col justify-center">
+          <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] animate-in fade-in duration-1000 min-h-[140px] sm:min-h-[160px] flex flex-col justify-center">
             <Lightbulb className="w-6 h-6 text-yellow-400/40 mx-auto mb-6" />
             <p className="text-lg text-indigo-100 italic font-serif leading-relaxed break-keep">
               "{SUBCONSCIOUS_QUOTES[quoteIdx]}"
@@ -135,7 +135,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
 
   if (phase === 'complete') {
     return (
-      <div className="space-y-10 py-10 animate-in fade-in duration-1000">
+      <div className="space-y-6 sm:space-y-10 py-6 sm:py-10 animate-in fade-in duration-1000">
         <div className="flex justify-center">
           <button onClick={onBack} className="p-3 glass-panel rounded-full text-indigo-300 hover:text-white transition-colors">
             <Home className="w-6 h-6" />
@@ -162,7 +162,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-12 pt-6">
+        <div className="grid grid-cols-1 gap-8 sm:gap-12 pt-4 sm:pt-6">
           {result.scenes.map((s, i) => (
             <div key={i} className="space-y-4">
               <div className="aspect-[4/5] rounded-[3rem] overflow-hidden glass-panel relative">
@@ -175,7 +175,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
                   <img src={s.imageUrl} alt={s.title} className="w-full h-full object-cover" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#05040a] to-transparent opacity-80"></div>
-                <div className="absolute bottom-6 left-8 text-[7px] text-purple-400 font-bold uppercase tracking-widest">
+                <div className="absolute bottom-6 left-8 text-[8px] sm:text-[9px] text-purple-400 font-bold uppercase tracking-widest">
                   The Scene
                 </div>
               </div>
@@ -210,12 +210,12 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
           <Palette className="w-5 h-5" />
           <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Lens Style</span>
         </div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {ART_STYLES.map(style => (
             <button
               key={style.id}
               onClick={() => setCurrentStyle(style.id)}
-              className={`py-3 rounded-xl border text-[9px] font-black transition-all ${currentStyle === style.id ? 'bg-white text-black border-white shadow-lg' : 'bg-white/5 border-white/10 text-indigo-200'}`}
+              className={`py-2.5 sm:py-3 rounded-xl border text-[10px] sm:text-[11px] font-black transition-all ${currentStyle === style.id ? 'bg-white text-black border-white shadow-lg' : 'bg-white/5 border-white/10 text-indigo-200'}`}
             >
               {style.name}
             </button>
@@ -228,7 +228,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="어젯밤의 무의식을 들려주세요..."
-          className="w-full h-[400px] glass-panel rounded-[3.5rem] p-10 text-2xl focus:outline-none focus:border-white/10 resize-none font-bold break-keep leading-relaxed text-white shadow-inner"
+          className="w-full h-[280px] sm:h-[350px] md:h-[400px] glass-panel rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 text-lg sm:text-2xl focus:outline-none focus:border-white/10 resize-none font-bold break-keep leading-relaxed text-white shadow-inner"
         />
         <div className="absolute bottom-10 right-10 flex gap-4">
           <button

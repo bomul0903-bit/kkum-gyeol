@@ -67,7 +67,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
       </div>
 
       <div className="space-y-4">
-        <div className="glass-panel p-8 rounded-[3rem] border-l-4 border-purple-500 space-y-2">
+        <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border-l-4 border-purple-500 space-y-2">
           <div className="flex items-center gap-3 text-purple-400 font-bold uppercase text-[9px] tracking-widest">
             <BrainCircuit className="w-4 h-4" /> 프로이트 분석
           </div>
@@ -75,7 +75,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
             "{dream.freudInterpretation}"
           </p>
         </div>
-        <div className="glass-panel p-8 rounded-[3rem] border-l-4 border-indigo-500 space-y-2">
+        <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border-l-4 border-indigo-500 space-y-2">
           <div className="flex items-center gap-3 text-indigo-400 font-bold uppercase text-[9px] tracking-widest">
             <ScrollText className="w-4 h-4" /> 일반 해몽
           </div>
@@ -103,7 +103,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
                   <img src={s.imageUrl} alt={s.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#05040a] to-transparent opacity-80"></div>
-                <div className="absolute bottom-10 left-10 text-[7px] text-purple-400 font-bold uppercase tracking-[0.6em]">FRAGMENT</div>
+                <div className="absolute bottom-8 left-8 sm:bottom-10 sm:left-10 text-[8px] sm:text-[9px] text-purple-400 font-bold uppercase tracking-[0.4em] sm:tracking-[0.6em]">FRAGMENT</div>
               </div>
               <div className="space-y-2 px-4">
                 <h4 className="text-3xl font-serif text-white font-black italic break-keep leading-tight">{s.title}</h4>

@@ -26,7 +26,7 @@ export default function OnboardingView({ onComplete }) {
     {
       id: 1,
       content: (
-        <div className="min-h-[85vh] flex flex-col items-center justify-center space-y-12 py-16 text-center animate-in fade-in zoom-in duration-700">
+        <div className="min-h-[70vh] sm:min-h-[80vh] flex flex-col items-center justify-center space-y-8 sm:space-y-12 py-10 sm:py-16 text-center animate-in fade-in zoom-in duration-700">
           <KkumGyeolLogo className="w-28 h-28" />
           <div className="space-y-6">
             <h1 className="text-8xl font-serif font-bold text-white dream-shadow italic tracking-tighter">꿈결</h1>
@@ -36,7 +36,7 @@ export default function OnboardingView({ onComplete }) {
           </div>
           <button
             onClick={() => setStep(2)}
-            className="w-64 py-5 bg-white text-black font-black rounded-full shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3"
+            className="w-full sm:w-64 py-4 sm:py-5 bg-white text-black font-black rounded-full shadow-xl active:scale-95 transition-all flex items-center justify-center gap-3"
           >
             여정 시작하기 <ChevronRight className="w-5 h-5" />
           </button>
@@ -83,7 +83,7 @@ export default function OnboardingView({ onComplete }) {
             <h2 className="text-3xl font-serif font-bold text-white dream-shadow">당신을 알려주세요</h2>
             <p className="text-indigo-400 font-serif text-[10px] uppercase tracking-widest">Profile</p>
           </div>
-          <div className="glass-panel p-8 rounded-[3rem] space-y-8">
+          <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] space-y-5 sm:space-y-8">
             <div className="space-y-2 text-left">
               <label className="text-[10px] font-black text-indigo-400 uppercase">Nickname</label>
               <input

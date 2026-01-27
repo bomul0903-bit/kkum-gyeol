@@ -78,7 +78,7 @@ export default function StatsView({ dreams, onBack }) {
       </header>
 
       {!isUnlocked ? (
-        <div className="glass-panel p-12 rounded-[3.5rem] border-white/5 space-y-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
+        <div className="glass-panel p-6 sm:p-12 rounded-[2.5rem] sm:rounded-[3.5rem] border-white/5 space-y-6 sm:space-y-10 flex flex-col items-center justify-center text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
             <div className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-1000" style={{ width: `${progress}%` }}></div>
           </div>
@@ -102,7 +102,7 @@ export default function StatsView({ dreams, onBack }) {
             </div>
           </div>
 
-          <section className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 p-8 rounded-[3.5rem] border border-white/10 space-y-6 relative overflow-hidden shadow-2xl">
+          <section className="bg-gradient-to-br from-purple-900/20 to-indigo-900/20 p-5 sm:p-8 rounded-[2.5rem] sm:rounded-[3.5rem] border border-white/10 space-y-4 sm:space-y-6 relative overflow-hidden shadow-2xl">
             <div className="absolute -right-10 -bottom-10 opacity-10">
               <BrainCircuit className="w-40 h-40" />
             </div>
@@ -122,12 +122,12 @@ export default function StatsView({ dreams, onBack }) {
 
           <div className="grid grid-cols-1 gap-6">
             {/* 감정 맵 - 실제 5개 영역 데이터 반영 */}
-            <div className="glass-panel p-8 rounded-[3rem] space-y-8 flex flex-col items-center bg-white/[0.02]">
+            <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] space-y-5 sm:space-y-8 flex flex-col items-center bg-white/[0.02]">
               <div className="w-full text-[10px] font-black text-indigo-300 uppercase tracking-[0.2em] flex justify-between items-center">
                 <span>Emotional Map (7 Units)</span>
-                <div className="px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-[8px] text-purple-300">Live Data</div>
+                <div className="px-2 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-[9px] sm:text-[10px] text-purple-300">Live Data</div>
               </div>
-              <div className="relative w-56 h-56 flex items-center justify-center py-4">
+              <div className="relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center py-4">
                 <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
                   <polygon points="50,10 90,40 75,85 25,85 10,40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
                   <polygon points="50,25 80,45 68,80 32,80 20,45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
@@ -155,12 +155,12 @@ export default function StatsView({ dreams, onBack }) {
             </div>
 
             {/* 반복 상징 - 실제 데이터 기반 횟수 정확 집계 */}
-            <div className="glass-panel p-8 rounded-[3.5rem] space-y-8 bg-[#ffffff02]">
+            <div className="glass-panel p-5 sm:p-8 rounded-[2.5rem] sm:rounded-[3.5rem] space-y-5 sm:space-y-8 bg-[#ffffff02]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 text-indigo-400 font-bold uppercase text-[10px] tracking-[0.2em]">
                   <Layers className="w-5 h-5" /> 반복되는 꿈의 파편들
                 </div>
-                <span className="text-[8px] text-indigo-500/50 font-black">Accuracy Verified</span>
+                <span className="text-[9px] sm:text-[10px] text-indigo-500/50 font-black">Accuracy Verified</span>
               </div>
               <div className="space-y-5">
                 {topSymbols.length > 0 ? topSymbols.map(([name, count], i) => (
@@ -176,7 +176,7 @@ export default function StatsView({ dreams, onBack }) {
                     </div>
                   </div>
                 )) : (
-                  <div className="py-10 text-center text-indigo-300/20 italic font-serif">충분한 상징 데이터가 수집되지 않았습니다.</div>
+                  <div className="py-6 sm:py-10 text-center text-indigo-300/20 italic font-serif">충분한 상징 데이터가 수집되지 않았습니다.</div>
                 )}
               </div>
             </div>
@@ -189,7 +189,7 @@ export default function StatsView({ dreams, onBack }) {
               <Sparkle className="w-2 h-2 text-purple-400" />
               <Sparkle className="w-2 h-2" />
             </div>
-            <p className="text-indigo-200/10 text-[9px] break-keep px-10 leading-relaxed">
+            <p className="text-indigo-200/10 text-[9px] break-keep px-4 sm:px-10 leading-relaxed">
               이 리포트는 최근 7개의 꿈 데이터를 기반으로 생성된 정밀 분석 결과입니다.
             </p>
           </div>

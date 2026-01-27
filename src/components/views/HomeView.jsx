@@ -31,7 +31,7 @@ export default function HomeView({ dreams, profile, onRecord, onStats, onViewDet
         <div className="flex items-center gap-4">
           <KkumGyeolLogo className="w-12 h-12" />
           <div className="space-y-0.5">
-            <p className="text-purple-400 font-serif tracking-[0.4em] uppercase text-[7px]">Beta 2.0</p>
+            <p className="text-purple-400 font-serif tracking-[0.4em] uppercase text-[8px] sm:text-[9px]">Beta 2.0</p>
             <h1 className="text-4xl font-serif font-bold text-white dream-shadow italic tracking-tighter">꿈결</h1>
           </div>
         </div>
@@ -41,24 +41,24 @@ export default function HomeView({ dreams, profile, onRecord, onStats, onViewDet
         </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-4">
+      <section className="grid grid-cols-2 gap-3 sm:gap-4">
         <button
           onClick={onRecord}
-          className="col-span-2 h-40 rounded-[3rem] bg-gradient-to-br from-indigo-600 to-purple-700 border border-white/10 flex flex-col items-center justify-center gap-4 active:scale-95 transition-all shadow-xl"
+          className="col-span-2 h-32 sm:h-40 rounded-[2rem] sm:rounded-[3rem] bg-gradient-to-br from-indigo-600 to-purple-700 border border-white/10 flex flex-col items-center justify-center gap-3 sm:gap-4 active:scale-95 transition-all shadow-xl"
         >
-          <Plus className="w-8 h-8 text-white" />
-          <span className="text-xl font-serif text-white font-black tracking-widest">새로운 꿈 조각</span>
+          <Plus className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          <span className="text-lg sm:text-xl font-serif text-white font-black tracking-widest">새로운 꿈 조각</span>
         </button>
         <div
           onClick={onStats}
-          className="glass-panel rounded-[2.5rem] p-6 flex flex-col items-center justify-center border-white/5 active:scale-95 transition-all cursor-pointer"
+          className="glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 flex flex-col items-center justify-center border-white/5 active:scale-95 transition-all cursor-pointer"
         >
-          <BarChart3 className="w-8 h-8 text-indigo-400 mb-2" />
-          <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">리포트</p>
+          <BarChart3 className="w-7 h-7 sm:w-8 sm:h-8 text-indigo-400 mb-2" />
+          <p className="text-[9px] sm:text-[10px] font-bold text-indigo-300 uppercase tracking-widest">리포트</p>
         </div>
-        <div className="glass-panel rounded-[2.5rem] p-6 flex flex-col items-center justify-center border-white/5">
-          <p className="text-4xl font-black text-white dream-shadow">{dreams.length}</p>
-          <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">저장됨</p>
+        <div className="glass-panel rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-6 flex flex-col items-center justify-center border-white/5">
+          <p className="text-3xl sm:text-4xl font-black text-white dream-shadow">{dreams.length}</p>
+          <p className="text-[9px] sm:text-[10px] font-bold text-indigo-300 uppercase tracking-widest">저장됨</p>
         </div>
       </section>
 
@@ -90,7 +90,7 @@ export default function HomeView({ dreams, profile, onRecord, onStats, onViewDet
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#05040a] to-transparent opacity-80"></div>
                   <div className="absolute bottom-6 left-8 right-8">
-                    <p className="text-[8px] text-purple-400 font-bold uppercase mb-1">
+                    <p className="text-[9px] sm:text-[10px] text-purple-400 font-bold uppercase mb-1">
                       {new Date(dream.createdAt?.seconds * 1000).toLocaleDateString()}
                     </p>
                     <h3 className="font-serif text-white dream-shadow line-clamp-2 italic font-bold text-xl">
