@@ -88,10 +88,22 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       const scenesWithImgs = [];
       const genderMod = profile?.gender === '여성' ? 'woman' : 'man';
       const scene = analysis.scenes[0];
-      const topicContent = `${scene.imagePrompt} featuring a Korean ${genderMod} in stylish modern fashion (Strictly NO Hanbok unless requested in text: "${input}")`;
+      // --- Hanbok Guard Logic ---
+      const hasHanbok = input.includes('한복') || input.toLowerCase().includes('hanbok');
+
+      let clothingPrompt = "wearing modern daily casual clothes, t-shirt, jeans, contemporary fashion";
+      let antiHanbokPrompt = ", hanbok, traditional korean clothing, joseon dynasty attire, historical costume";
+
+      if (hasHanbok) {
+        clothingPrompt = "wearing traditional Korean Hanbok";
+        antiHanbokPrompt = "";
+      }
+
+      const topicContent = `${scene.imagePrompt} featuring a Korean ${genderMod}, ${clothingPrompt}`;
       const finalPrompt = `${styleData.prompt}, ${topicContent}, high resolution, masterpiece, detailed`;
 
-      const rawImg = await generateImage(finalPrompt, styleData.negativePrompt);
+      const finalNegative = `${styleData.negativePrompt}${antiHanbokPrompt}`;
+      const rawImg = await generateImage(finalPrompt, finalNegative);
       const compImg = await compressImage(rawImg, 800);
       scenesWithImgs.push({ ...scene, imageUrl: compImg, index: 0 });
 
