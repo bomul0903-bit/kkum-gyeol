@@ -14,13 +14,58 @@ export const SUBCONSCIOUS_QUOTES = [
 ];
 
 export const ART_STYLES = [
-  { id: 'watercolor', name: '수채화', prompt: 'watercolor painting, wet-on-wet, bleeding ink, soft edges, paper texture, delicate washes' },
-  { id: 'oil_painting', name: '유화', prompt: 'oil painting, thick impasto, visible brushstrokes, rich texture, heavy paint, classical lighting' },
-  { id: 'anime', name: '애니메이션', prompt: 'high-quality anime style, Makoto Shinkai aesthetic, vibrant colors, cinematic lighting, sharp outlines' },
-  { id: 'oriental', name: '동양화', prompt: 'traditional ink wash painting, Sumi-e style, Zen, negative space, elegant brushwork, rice paper texture' },
-  { id: 'abstract', name: '추상화', prompt: 'abstract expressionism, in the style of Wassily Kandinsky and Pablo Picasso, fluid organic shapes, emotional color palette, non-representational, layered textures' },
-  { id: 'cyberpunk', name: '사이버펑크', prompt: 'cyberpunk aesthetic, neon glow, futuristic city, night rain, teal and orange, glitch effects' },
-  { id: 'lofi_retro', name: '로파이 레트로', prompt: 'Lo-fi hip hop aesthetic, retro 80s/90s, grainy texture, muted nostalgic colors, cozy indoor vibe' },
-  { id: 'pop_art_3d', name: '3D 팝아트', prompt: '3D rendering, claymorphism, vibrant pop art colors, glossy finish, stylized characters, playful lighting' },
-  { id: 'surrealism', name: '초현실주의', prompt: 'surrealism, dreamlike logic, Salvador Dali style, floating objects, bizarre juxtaposition, impossible physics' }
+  {
+    id: 'watercolor',
+    name: '수채화',
+    prompt: 'A hand-painted watercolor illustration on cold-press paper, wet-on-wet technique, pigment bleeding naturally into water, soft feathered edges, translucent color layers, visible paper grain, light pastel tones, airy atmosphere, no hard outlines, no digital sharpness',
+    negativePrompt: 'no oil paint, no acrylic, no sharp edges, no digital illustration, no anime, no 3D'
+  },
+  {
+    id: 'oil_painting',
+    name: '유화',
+    prompt: 'Classical oil painting with thick impasto, heavy layered oil paint, visible expressive brushstrokes, rich earthy pigments, strong chiaroscuro lighting, canvas texture clearly visible, museum-quality fine art painting',
+    negativePrompt: 'no watercolor, no flat color, no digital smoothness, no anime, no illustration'
+  },
+  {
+    id: 'anime',
+    name: '애니메이션',
+    prompt: 'High-quality Japanese anime illustration, Makoto Shinkai-inspired background art, clean sharp lineart, vibrant saturated colors, cinematic sunlight and lens flare, ultra-detailed sky and clouds, emotional atmosphere, 2D anime aesthetic',
+    negativePrompt: 'no oil painting, no watercolor, no realistic photography, no rough brushstrokes'
+  },
+  {
+    id: 'oriental',
+    name: '동양화',
+    prompt: 'Traditional East Asian ink wash painting (Sumi-e), monochrome black ink with subtle gray gradations, minimalist composition, strong negative space, rice paper texture, soft brush diffusion, Zen aesthetic, calm and meditative atmosphere',
+    negativePrompt: 'no bright colors, no oil paint, no digital shading, no anime'
+  },
+  {
+    id: 'abstract',
+    name: '추상화',
+    prompt: 'Abstract expressionist painting inspired by Wassily Kandinsky and early Picasso, bold geometric lines mixed with fragmented organic forms, non-representational composition, emotion-driven color contrasts, painterly texture, museum-style modern art',
+    negativePrompt: 'no realism, no characters, no anime, no photorealism'
+  },
+  {
+    id: 'cyberpunk',
+    name: '사이버펑크',
+    prompt: 'Cyberpunk cityscape at night, dense futuristic megacity, neon signs in Japanese and English, wet streets reflecting neon lights, teal and orange color contrast, glitch effects, holograms, high-tech dystopian atmosphere, cinematic sci-fi concept art',
+    negativePrompt: 'no medieval, no fantasy, no watercolor, no oil painting'
+  },
+  {
+    id: 'lofi_retro',
+    name: '로파이 레트로',
+    prompt: 'Lo-fi hip hop illustration, 90s retro anime-inspired scene, muted pastel colors, warm nostalgic lighting, film grain, VHS noise, soft blur, cozy and melancholic mood, low-detail background',
+    negativePrompt: 'no ultra HD, no sharp realism, no 3D render'
+  },
+  {
+    id: 'pop_art_3d',
+    name: '3D 팝아트',
+    prompt: '3D clay-style illustration, claymorphism aesthetic, soft rounded shapes, plasticine texture, glossy surface, vibrant pop art colors, toy-like proportions, studio lighting, clean background',
+    negativePrompt: 'no 2D illustration, no watercolor, no oil painting'
+  },
+  {
+    id: 'surrealism',
+    name: '초현실주의',
+    prompt: 'Surrealist painting in the style of Salvador Dalí, dreamlike atmosphere, impossible physics, floating objects, melting architecture, hyper-detailed yet irrational composition, symbolic imagery, subconscious logic',
+    negativePrompt: 'no realism, no anime, no cartoon'
+  }
 ];

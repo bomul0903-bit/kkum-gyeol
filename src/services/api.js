@@ -18,11 +18,11 @@ export const analyzeDream = async (dreamText) => {
 };
 
 // 이미지 생성 API 호출
-export const generateImage = async (prompt) => {
+export const generateImage = async (prompt, negativePrompt = "") => {
   const response = await fetch('/api/generate-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt })
+    body: JSON.stringify({ prompt, negativePrompt })
   });
 
   if (!response.ok) {

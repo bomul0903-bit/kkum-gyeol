@@ -144,7 +144,7 @@ export default function OnboardingView({ onComplete }) {
             <p className="text-indigo-400 font-serif text-[10px] uppercase tracking-widest">Default Style</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {ART_STYLES.filter(s => !s.premium).map(style => (
+            {ART_STYLES.map(style => (
               <button
                 key={style.id}
                 onClick={() => setForm({ ...form, artStyle: style.id })}

@@ -91,7 +91,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       const topicContent = `${scene.imagePrompt} featuring a Korean ${genderMod} in stylish modern fashion (Strictly NO Hanbok unless requested in text: "${input}")`;
       const finalPrompt = `${styleData.prompt}, ${topicContent}, high resolution, masterpiece, detailed`;
 
-      const rawImg = await generateImage(finalPrompt);
+      const rawImg = await generateImage(finalPrompt, styleData.negativePrompt);
       const compImg = await compressImage(rawImg, 800);
       scenesWithImgs.push({ ...scene, imageUrl: compImg, index: 0 });
 
