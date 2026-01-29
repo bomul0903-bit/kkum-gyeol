@@ -1,5 +1,16 @@
 export const STATS_THRESHOLD = 7;
 
+export const AI_MODELS = [
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', label: '기본', model: 'gemini-2.5-flash-preview-09-2025' },
+  { id: 'gemini-3-flash', name: 'Gemini 3 Flash', label: '최신', model: 'gemini-3-flash-preview' },
+];
+
+export const IMAGE_MODELS = [
+  { id: 'imagen', name: 'Imagen 4', label: '기본', model: 'imagen-4.0-generate-001' },
+  { id: 'gemini-image', name: 'Gemini 3 Pro', label: '실험적', model: 'gemini-3-pro-image-preview' },
+  { id: 'both', name: '동시 비교', label: '2장', model: 'both' },
+];
+
 export const SUBCONSCIOUS_QUOTES = [
   "꿈은 무의식이라는 거대한 대륙에서 날아온 전갈이다.",
   "무의식은 논리로 말하지 않는다. 오직 꿈이라는 은유와 상징으로 속삭일 뿐이다.",

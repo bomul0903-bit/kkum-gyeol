@@ -26,7 +26,8 @@ const fetchWithRetry = async (url, options, retries = 5) => {
 
 export async function POST(request) {
   try {
-    const { dreamText } = await request.json();
+    const { dreamText, model } = await request.json();
+    const modelName = model || 'gemini-2.5-flash-preview-09-2025';
 
     if (!dreamText) {
       return NextResponse.json({ error: 'dreamText is required' }, { status: 400 });
@@ -81,7 +82,7 @@ export async function POST(request) {
     };
 
     const data = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -22,7 +22,7 @@ const fetchWithRetry = async (url, options, retries = 3) => {
 
 export async function POST(request) {
   try {
-    const { prompt, negativePrompt } = await request.json();
+    const { prompt, negativePrompt, imageModel } = await request.json();
 
     if (!prompt) {
       return NextResponse.json({ error: 'prompt is required' }, { status: 400 });
@@ -34,7 +34,38 @@ export async function POST(request) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    // 1. Imagen 4.0 (Primary) - @google/genai SDK (원본 방식)
+    // Gemini Image 모델 선택 시
+    if (imageModel === 'gemini-3-pro-image-preview') {
+      try {
+        const geminiPrompt = negativePrompt
+          ? `${prompt}. (IMPORTANT: Avoid the following styles or elements: ${negativePrompt})`
+          : prompt;
+
+        const data = await fetchWithRetry(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `Create an artistic masterpiece for this dream: ${geminiPrompt}.` }] }],
+              generationConfig: { responseModalities: ['IMAGE'] }
+            })
+          }
+        );
+
+        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+        if (b64) {
+          return NextResponse.json({
+            imageUrl: `data:image/png;base64,${b64}`
+          });
+        }
+      } catch (e) {
+        console.error("Gemini image generation failed.", e);
+      }
+      return NextResponse.json({ error: 'Image generation failed' }, { status: 500 });
+    }
+
+    // 1. Imagen 4.0 (Primary) - @google/genai SDK (기본)
     try {
       const ai = new GoogleGenAI({ apiKey });
 
@@ -64,7 +95,7 @@ export async function POST(request) {
         : prompt;
 
       const data = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

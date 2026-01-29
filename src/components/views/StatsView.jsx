@@ -13,12 +13,15 @@ import {
   TrendingDown,
   Minus,
   Sun,
-  CloudRain
+  CloudRain,
+  Pentagon,
+  BarChart3
 } from 'lucide-react';
 import { STATS_THRESHOLD } from '@/constants';
 
 export default function StatsView({ dreams, onBack }) {
   const [reportIndex, setReportIndex] = useState(0);
+  const [chartType, setChartType] = useState('radar');
 
   const currentBatch = dreams.slice(reportIndex * STATS_THRESHOLD, (reportIndex + 1) * STATS_THRESHOLD);
   const nextBatch = dreams.slice((reportIndex + 1) * STATS_THRESHOLD, (reportIndex + 2) * STATS_THRESHOLD);
@@ -191,28 +194,72 @@ export default function StatsView({ dreams, onBack }) {
             <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] space-y-5 sm:space-y-8 flex flex-col items-center bg-white/[0.02]">
               <div className="w-full text-[10px] font-black text-indigo-300 uppercase tracking-[0.2em] flex justify-between items-center">
                 <span>Emotional Map</span>
+                <div className="flex gap-1">
+                  <button onClick={() => setChartType('radar')} className={`p-1.5 rounded-lg transition-all ${chartType === 'radar' ? 'bg-white/10 text-white' : 'text-indigo-400/40'}`}>
+                    <Pentagon className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={() => setChartType('bar')} className={`p-1.5 rounded-lg transition-all ${chartType === 'bar' ? 'bg-white/10 text-white' : 'text-indigo-400/40'}`}>
+                    <BarChart3 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
-              <div className="relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center py-4">
-                <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
-                  <polygon points="50,10 90,40 75,85 25,85 10,40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-                  <polygon points="50,25 80,45 68,80 32,80 20,45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
-                  {hasComparison && (
+
+              {chartType === 'radar' ? (
+                <div className="relative w-44 h-44 sm:w-56 sm:h-56 flex items-center justify-center py-4">
+                  <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
+                    <polygon points="50,10 90,40 75,85 25,85 10,40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                    <polygon points="50,25 80,45 68,80 32,80 20,45" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="0.5" />
+                    {hasComparison && (
+                      <path
+                        d={`M 50 ${10 + (100 - prevStats.emotions.joy) * 0.4} L ${90 - (100 - prevStats.emotions.peace) * 0.4} ${40 - (100 - prevStats.emotions.peace) * 0.1} L ${75 - (100 - prevStats.emotions.vitality) * 0.25} ${85 - (100 - prevStats.emotions.vitality) * 0.1} L ${25 + (100 - prevStats.emotions.anxiety) * 0.25} ${85 - (100 - prevStats.emotions.anxiety) * 0.1} L ${10 + (100 - prevStats.emotions.sadness) * 0.4} ${40 - (100 - prevStats.emotions.sadness) * 0.1} Z`}
+                        fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2"
+                      />
+                    )}
                     <path
-                      d={`M 50 ${10 + (100 - prevStats.emotions.joy) * 0.4} L ${90 - (100 - prevStats.emotions.peace) * 0.4} ${40 - (100 - prevStats.emotions.peace) * 0.1} L ${75 - (100 - prevStats.emotions.vitality) * 0.25} ${85 - (100 - prevStats.emotions.vitality) * 0.1} L ${25 + (100 - prevStats.emotions.anxiety) * 0.25} ${85 - (100 - prevStats.emotions.anxiety) * 0.1} L ${10 + (100 - prevStats.emotions.sadness) * 0.4} ${40 - (100 - prevStats.emotions.sadness) * 0.1} Z`}
-                      fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2,2"
+                      d={`M 50 ${10 + (100 - currentStats.emotions.joy) * 0.4} L ${90 - (100 - currentStats.emotions.peace) * 0.4} ${40 - (100 - currentStats.emotions.peace) * 0.1} L ${75 - (100 - currentStats.emotions.vitality) * 0.25} ${85 - (100 - currentStats.emotions.vitality) * 0.1} L ${25 + (100 - currentStats.emotions.anxiety) * 0.25} ${85 - (100 - currentStats.emotions.anxiety) * 0.1} L ${10 + (100 - currentStats.emotions.sadness) * 0.4} ${40 - (100 - currentStats.emotions.sadness) * 0.1} Z`}
+                      fill="rgba(168, 85, 247, 0.25)" stroke="#A855F7" strokeWidth="2" className="animate-pulse"
                     />
-                  )}
-                  <path
-                    d={`M 50 ${10 + (100 - currentStats.emotions.joy) * 0.4} L ${90 - (100 - currentStats.emotions.peace) * 0.4} ${40 - (100 - currentStats.emotions.peace) * 0.1} L ${75 - (100 - currentStats.emotions.vitality) * 0.25} ${85 - (100 - currentStats.emotions.vitality) * 0.1} L ${25 + (100 - currentStats.emotions.anxiety) * 0.25} ${85 - (100 - currentStats.emotions.anxiety) * 0.1} L ${10 + (100 - currentStats.emotions.sadness) * 0.4} ${40 - (100 - currentStats.emotions.sadness) * 0.1} Z`}
-                    fill="rgba(168, 85, 247, 0.25)" stroke="#A855F7" strokeWidth="2" className="animate-pulse"
-                  />
-                  <g transform="translate(50, 5)"><text fontSize="4" fill="#A855F7" textAnchor="middle" fontWeight="black">기쁨({currentStats.emotions.joy})</text></g>
-                  <g transform="translate(95, 42)"><text fontSize="4" fill="#6366F1" textAnchor="start">평온({currentStats.emotions.peace})</text></g>
-                  <g transform="translate(80, 92)"><text fontSize="4" fill="#FBBF24" textAnchor="start">활력({currentStats.emotions.vitality})</text></g>
-                  <g transform="translate(20, 92)"><text fontSize="4" fill="#EC4899" textAnchor="end">불안({currentStats.emotions.anxiety})</text></g>
-                  <g transform="translate(5, 42)"><text fontSize="4" fill="#3B82F6" textAnchor="end">슬픔({currentStats.emotions.sadness})</text></g>
-                </svg>
-              </div>
+                    <g transform="translate(50, 5)"><text fontSize="4" fill="#A855F7" textAnchor="middle" fontWeight="black">기쁨({currentStats.emotions.joy})</text></g>
+                    <g transform="translate(95, 42)"><text fontSize="4" fill="#6366F1" textAnchor="start">평온({currentStats.emotions.peace})</text></g>
+                    <g transform="translate(80, 92)"><text fontSize="4" fill="#FBBF24" textAnchor="start">활력({currentStats.emotions.vitality})</text></g>
+                    <g transform="translate(20, 92)"><text fontSize="4" fill="#EC4899" textAnchor="end">불안({currentStats.emotions.anxiety})</text></g>
+                    <g transform="translate(5, 42)"><text fontSize="4" fill="#3B82F6" textAnchor="end">슬픔({currentStats.emotions.sadness})</text></g>
+                  </svg>
+                </div>
+              ) : (
+                <div className="w-full space-y-6 py-4">
+                  {[
+                    { key: 'joy', label: '기쁨', color: '#A855F7' },
+                    { key: 'peace', label: '평온', color: '#6366F1' },
+                    { key: 'vitality', label: '활력', color: '#FBBF24' },
+                    { key: 'anxiety', label: '불안', color: '#EC4899' },
+                    { key: 'sadness', label: '슬픔', color: '#3B82F6' },
+                  ].map(({ key, label, color }) => (
+                    <div key={key} className="space-y-2">
+                      <div className="flex justify-between items-center text-sm">
+                        <span style={{ color }} className="font-bold">{label}</span>
+                        <div className="flex items-center gap-2">
+                          <ComparisonIndicator type={key} />
+                          <span className="text-white font-black text-base">{currentStats.emotions[key]}</span>
+                        </div>
+                      </div>
+                      <div className="relative h-5 bg-white/5 rounded-full overflow-hidden">
+                        {hasComparison && (
+                          <div
+                            className="absolute inset-y-0 left-0 rounded-full opacity-30 border-r border-dashed border-white/40"
+                            style={{ width: `${prevStats.emotions[key]}%`, backgroundColor: color }}
+                          />
+                        )}
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000"
+                          style={{ width: `${currentStats.emotions[key]}%`, backgroundColor: color }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
               {hasComparison && <div className="text-[8px] text-gray-500 flex items-center gap-2"><div className="w-3 h-0.5 bg-white/20 border-dashed border-t border-white/40"></div>지난 리포트</div>}
             </div>
 

@@ -11,10 +11,11 @@ import {
   Lightbulb,
   BrainCircuit,
   ScrollText,
-  AlertTriangle
+  AlertTriangle,
+  Settings
 } from 'lucide-react';
 import { KkumGyeolLogo } from '../common';
-import { ART_STYLES, SUBCONSCIOUS_QUOTES } from '@/constants';
+import { ART_STYLES, AI_MODELS, IMAGE_MODELS, SUBCONSCIOUS_QUOTES } from '@/constants';
 import { compressImage } from '@/lib/utils';
 import { saveDream, saveScene, auth } from '@/services/firebase';
 import { analyzeDream, generateImage } from '@/services/api';
@@ -23,6 +24,9 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [input, setInput] = useState('');
   const [currentStyle, setCurrentStyle] = useState(profile?.artStyle || 'watercolor');
   const [isRecording, setIsRecording] = useState(false);
+  const [currentModel, setCurrentModel] = useState(AI_MODELS[0].model);
+  const [currentImageModel, setCurrentImageModel] = useState('both');
+  const [showModelPanel, setShowModelPanel] = useState(false);
   const [phase, setPhase] = useState('input');
   const [result, setResult] = useState(null);
   const [quoteIdx, setQuoteIdx] = useState(Math.floor(Math.random() * SUBCONSCIOUS_QUOTES.length));
@@ -81,7 +85,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
     const styleData = ART_STYLES.find(s => s.id === currentStyle);
 
     try {
-      const analysis = await analyzeDream(input);
+      const analysis = await analyzeDream(input, currentModel);
       if (!analysis) throw new Error("분석 오류");
 
       setPhase('generating');
@@ -103,9 +107,21 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       const finalPrompt = `${styleData.prompt}, ${topicContent}, high resolution, masterpiece, detailed`;
 
       const finalNegative = `${styleData.negativePrompt}${antiHanbokPrompt}`;
-      const rawImg = await generateImage(finalPrompt, finalNegative);
-      const compImg = await compressImage(rawImg, 800);
-      scenesWithImgs.push({ ...scene, imageUrl: compImg, index: 0 });
+
+      if (currentImageModel === 'both') {
+        const [rawImagen, rawGemini] = await Promise.all([
+          generateImage(finalPrompt, finalNegative, 'imagen-4.0-generate-001').catch(() => 'error'),
+          generateImage(finalPrompt, finalNegative, 'gemini-3-pro-image-preview').catch(() => 'error'),
+        ]);
+        const compImagen = rawImagen !== 'error' ? await compressImage(rawImagen, 800) : 'error';
+        const compGemini = rawGemini !== 'error' ? await compressImage(rawGemini, 800) : 'error';
+        scenesWithImgs.push({ ...scene, imageUrl: compImagen, index: 0, modelLabel: 'Imagen 4' });
+        scenesWithImgs.push({ ...scene, imageUrl: compGemini, index: 1, modelLabel: 'Gemini 3 Pro' });
+      } else {
+        const rawImg = await generateImage(finalPrompt, finalNegative, currentImageModel);
+        const compImg = await compressImage(rawImg, 800);
+        scenesWithImgs.push({ ...scene, imageUrl: compImg, index: 0 });
+      }
 
       const dreamId = await saveDream(auth.currentUser.uid, {
         ...analysis,
@@ -188,7 +204,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#05040a] to-transparent opacity-80"></div>
                 <div className="absolute bottom-6 left-8 text-[8px] sm:text-[9px] text-purple-400 font-bold uppercase tracking-widest">
-                  The Scene
+                  {s.modelLabel || 'The Scene'}
                 </div>
               </div>
               <h4 className="text-xl font-serif text-white font-black italic text-center">{s.title}</h4>
@@ -212,10 +228,51 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
           <ChevronLeft className="w-4 h-4" /> BACK
         </button>
         <KkumGyeolLogo className="w-12 h-12" />
-        <button onClick={onBack} className="p-3 glass-panel rounded-full text-indigo-300">
-          <Home className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => setShowModelPanel(prev => !prev)} className="p-3 glass-panel rounded-full text-indigo-300">
+            <Settings className="w-5 h-5" />
+          </button>
+          <button onClick={onBack} className="p-3 glass-panel rounded-full text-indigo-300">
+            <Home className="w-5 h-5" />
+          </button>
+        </div>
       </header>
+
+      {showModelPanel && (
+        <div className="glass-panel rounded-[2.5rem] p-6 space-y-6 animate-in fade-in duration-300">
+          <div className="flex items-center gap-3 text-purple-400 font-serif">
+            <BrainCircuit className="w-5 h-5" />
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em]">AI Model</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            {AI_MODELS.map(m => (
+              <button
+                key={m.id}
+                onClick={() => setCurrentModel(m.model)}
+                className={`py-2.5 sm:py-3 rounded-xl border text-[10px] sm:text-[11px] font-black transition-all ${currentModel === m.model ? 'bg-white text-black border-white shadow-lg' : 'bg-white/5 border-white/10 text-indigo-200'}`}
+              >
+                {m.name} <span className="opacity-50">({m.label})</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-3 text-purple-400 font-serif pt-4">
+            <Palette className="w-5 h-5" />
+            <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Image Model</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2 sm:gap-3">
+            {IMAGE_MODELS.map(m => (
+              <button
+                key={m.id}
+                onClick={() => setCurrentImageModel(m.model)}
+                className={`py-2.5 sm:py-3 rounded-xl border text-[10px] sm:text-[11px] font-black transition-all ${currentImageModel === m.model ? 'bg-white text-black border-white shadow-lg' : 'bg-white/5 border-white/10 text-indigo-200'}`}
+              >
+                {m.name} <span className="opacity-50">({m.label})</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="glass-panel rounded-[2.5rem] p-6 space-y-6">
         <div className="flex items-center gap-3 text-purple-400 font-serif">

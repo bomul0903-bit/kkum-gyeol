@@ -6,7 +6,7 @@
 ## 기술 스택
 - **프레임워크**: Next.js 14+ (App Router)
 - **인증/DB**: Firebase (Auth, Firestore)
-- **AI**: Gemini API (gemini-2.0-flash), Imagen API (imagen-4.0-generate-001)
+- **AI**: Gemini API (gemini-2.5-flash), Imagen API (imagen-4.0-generate-001)
 - **SDK**: @google/genai
 - **배포**: Vercel (kkum-gyeol.vercel.app)
 

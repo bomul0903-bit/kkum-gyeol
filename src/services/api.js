@@ -1,11 +1,11 @@
 'use client';
 
 // 꿈 분석 API 호출
-export const analyzeDream = async (dreamText) => {
+export const analyzeDream = async (dreamText, model) => {
   const response = await fetch('/api/analyze-dream', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dreamText })
+    body: JSON.stringify({ dreamText, model })
   });
 
   if (!response.ok) {
@@ -18,11 +18,11 @@ export const analyzeDream = async (dreamText) => {
 };
 
 // 이미지 생성 API 호출
-export const generateImage = async (prompt, negativePrompt = "") => {
+export const generateImage = async (prompt, negativePrompt = "", imageModel) => {
   const response = await fetch('/api/generate-image', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prompt, negativePrompt })
+    body: JSON.stringify({ prompt, negativePrompt, imageModel })
   });
 
   if (!response.ok) {
