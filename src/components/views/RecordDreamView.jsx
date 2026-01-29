@@ -153,7 +153,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
           <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] animate-in fade-in duration-1000 min-h-[140px] sm:min-h-[160px] flex flex-col justify-center">
             <Lightbulb className="w-6 h-6 text-yellow-400/40 mx-auto mb-6" />
             <p className="text-lg text-indigo-100 italic font-serif leading-relaxed break-keep">
-              "{SUBCONSCIOUS_QUOTES[quoteIdx]}"
+              &ldquo;{SUBCONSCIOUS_QUOTES[quoteIdx]}&rdquo;
             </p>
           </div>
         </div>
@@ -178,7 +178,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
               <BrainCircuit className="w-4 h-4" /> 프로이트 분석
             </div>
             <p className="text-lg text-gray-100 font-serif italic leading-relaxed break-keep">
-              "{result.freudInterpretation}"
+              &ldquo;{result.freudInterpretation}&rdquo;
             </p>
           </div>
           <div className="glass-panel p-6 rounded-[2rem] border-l-4 border-indigo-500 space-y-2">
@@ -186,7 +186,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
               <ScrollText className="w-4 h-4" /> 일반 해몽
             </div>
             <p className="text-lg text-gray-100 font-serif italic leading-relaxed break-keep">
-              "{result.generalInterpretation}"
+              &ldquo;{result.generalInterpretation}&rdquo;
             </p>
           </div>
         </div>

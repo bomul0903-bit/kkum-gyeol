@@ -23,6 +23,7 @@ export default function HomeView({ dreams, profile, onRecord, onStats, onViewDet
     };
 
     fetchPreviews();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dreams]);
 
   return (

@@ -179,8 +179,8 @@ export default function StatsView({ dreams, onBack }) {
             <div className="space-y-5">
               <p className="text-2xl md:text-3xl font-serif text-white italic leading-tight break-keep">
                 {hasComparison ?
-                  <span>"지난 리포트와 비교된<br /><span className="text-purple-400 underline underline-offset-8 decoration-purple-500/50">심리적 변화</span> 분석입니다."</span> :
-                  <span>"이 기간의 꿈 조각들이 들려주는 <br />당신의 <span className="text-purple-400 underline underline-offset-8 decoration-purple-500/50">심리적 기저</span> 분석입니다."</span>
+                  <span>&ldquo;지난 리포트와 비교된<br /><span className="text-purple-400 underline underline-offset-8 decoration-purple-500/50">심리적 변화</span> 분석입니다.&rdquo;</span> :
+                  <span>&ldquo;이 기간의 꿈 조각들이 들려주는 <br />당신의 <span className="text-purple-400 underline underline-offset-8 decoration-purple-500/50">심리적 기저</span> 분석입니다.&rdquo;</span>
                 }
               </p>
               <div className="p-5 bg-[#ffffff05] backdrop-blur-sm rounded-2xl border border-white/5 text-sm text-indigo-100/70 leading-relaxed break-keep flex gap-3">

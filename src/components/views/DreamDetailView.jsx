@@ -72,7 +72,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
             <BrainCircuit className="w-4 h-4" /> 프로이트 분석
           </div>
           <p className="text-lg text-gray-100 font-serif italic leading-relaxed break-keep">
-            "{dream.freudInterpretation}"
+            &ldquo;{dream.freudInterpretation}&rdquo;
           </p>
         </div>
         <div className="glass-panel p-5 sm:p-8 rounded-[2rem] sm:rounded-[3rem] border-l-4 border-indigo-500 space-y-2">
@@ -80,7 +80,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
             <ScrollText className="w-4 h-4" /> 일반 해몽
           </div>
           <p className="text-lg text-gray-100 font-serif italic leading-relaxed break-keep">
-            "{dream.generalInterpretation}"
+            &ldquo;{dream.generalInterpretation}&rdquo;
           </p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function DreamDetailView({ dream, onBack, showToast }) {
               </div>
               <div className="space-y-2 px-4">
                 <h4 className="text-3xl font-serif text-white font-black italic break-keep leading-tight">{s.title}</h4>
-                <p className="text-indigo-200/40 font-serif text-lg break-keep italic leading-relaxed">"{s.desc}"</p>
+                <p className="text-indigo-200/40 font-serif text-lg break-keep italic leading-relaxed">&ldquo;{s.desc}&rdquo;</p>
               </div>
             </div>
           ))
