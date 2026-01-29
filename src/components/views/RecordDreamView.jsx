@@ -24,8 +24,8 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [input, setInput] = useState('');
   const [currentStyle, setCurrentStyle] = useState(profile?.artStyle || 'watercolor');
   const [isRecording, setIsRecording] = useState(false);
-  const [currentModel, setCurrentModel] = useState(AI_MODELS[0].model);
-  const [currentImageModel, setCurrentImageModel] = useState('both');
+  const [currentModel, setCurrentModel] = useState(AI_MODELS[1].model);
+  const [currentImageModel, setCurrentImageModel] = useState('gemini-3-pro-image-preview');
   const [showModelPanel, setShowModelPanel] = useState(false);
   const [phase, setPhase] = useState('input');
   const [result, setResult] = useState(null);

@@ -21,7 +21,7 @@ import { STATS_THRESHOLD } from '@/constants';
 
 export default function StatsView({ dreams, onBack }) {
   const [reportIndex, setReportIndex] = useState(0);
-  const [chartType, setChartType] = useState('radar');
+  const [chartType, setChartType] = useState('bar');
 
   const currentBatch = dreams.slice(reportIndex * STATS_THRESHOLD, (reportIndex + 1) * STATS_THRESHOLD);
   const nextBatch = dreams.slice((reportIndex + 1) * STATS_THRESHOLD, (reportIndex + 2) * STATS_THRESHOLD);
