@@ -44,6 +44,12 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
     return () => clearInterval(timer);
   }, [phase]);
 
+  const isRecordingRef = useRef(false);
+
+  useEffect(() => {
+    isRecordingRef.current = isRecording;
+  }, [isRecording]);
+
   useEffect(() => {
     const SpeechRec = typeof window !== 'undefined'
       ? window.SpeechRecognition || window.webkitSpeechRecognition
@@ -87,11 +93,11 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
         }
       };
       rec.onend = () => {
-        if (isRecording) rec.start();
+        if (isRecordingRef.current) rec.start();
       };
       recognitionRef.current = rec;
     }
-  }, [isRecording]);
+  }, []);
 
   // 녹음 시간 타이머 + 무음 타임아웃 (30초)
   useEffect(() => {
