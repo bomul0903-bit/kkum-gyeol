@@ -11,6 +11,19 @@ const playfair = Playfair_Display({
 export const metadata = {
   title: "꿈결 - 무의식의 예술",
   description: "어젯밤 당신의 무의식이 보낸 장면을 예술로 기록합니다.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "꿈결",
+  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#7c3aed",
 };
 
 export default function RootLayout({ children }) {

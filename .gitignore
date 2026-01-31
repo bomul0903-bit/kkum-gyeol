@@ -42,3 +42,11 @@ yarn-error.log*
 next-env.d.ts
 imagen_test_code/
 gemini_App_jsx_code/
+
+# PWA (next-pwa 자동 생성)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/worker-*.js
+public/worker-*.js.map
