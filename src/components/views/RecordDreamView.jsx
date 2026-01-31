@@ -24,6 +24,8 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [input, setInput] = useState('');
   const [currentStyle, setCurrentStyle] = useState(profile?.artStyle || 'watercolor');
   const [isRecording, setIsRecording] = useState(false);
+  const [interimText, setInterimText] = useState('');
+  const [recordingTime, setRecordingTime] = useState(0);
   const [currentModel, setCurrentModel] = useState(AI_MODELS[1].model);
   const [currentImageModel, setCurrentImageModel] = useState('gemini-3-pro-image-preview');
   const [showModelPanel, setShowModelPanel] = useState(false);
@@ -31,6 +33,8 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [result, setResult] = useState(null);
   const [quoteIdx, setQuoteIdx] = useState(Math.floor(Math.random() * SUBCONSCIOUS_QUOTES.length));
   const recognitionRef = useRef(null);
+  const lastSpeechRef = useRef(null);
+  const recordingTimerRef = useRef(null);
 
   useEffect(() => {
     let timer;
@@ -48,19 +52,66 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
     if (SpeechRec) {
       const rec = new SpeechRec();
       rec.continuous = true;
+      rec.interimResults = true;
       rec.lang = 'ko-KR';
       rec.onresult = (e) => {
-        let text = '';
+        let finalText = '';
+        let interim = '';
         for (let i = e.resultIndex; i < e.results.length; ++i) {
-          if (e.results[i].isFinal) text += e.results[i][0].transcript;
+          if (e.results[i].isFinal) {
+            finalText += e.results[i][0].transcript;
+          } else {
+            interim += e.results[i][0].transcript;
+          }
         }
-        if (text) setInput(prev => (prev ? prev + ' ' : '') + text);
+        if (finalText) {
+          setInput(prev => (prev ? prev + ' ' : '') + finalText);
+          setInterimText('');
+          lastSpeechRef.current = Date.now();
+        } else {
+          setInterimText(interim);
+          lastSpeechRef.current = Date.now();
+        }
+      };
+      rec.onerror = (e) => {
+        const messages = {
+          'not-allowed': '마이크 권한을 허용해주세요',
+          'network': '네트워크 연결을 확인해주세요',
+          'no-speech': '음성이 감지되지 않았습니다',
+          'audio-capture': '마이크를 찾을 수 없습니다',
+        };
+        showToast(messages[e.error] || '음성 인식 오류가 발생했습니다');
+        if (e.error !== 'no-speech') {
+          setIsRecording(false);
+          setInterimText('');
+        }
       };
       rec.onend = () => {
         if (isRecording) rec.start();
       };
       recognitionRef.current = rec;
     }
+  }, [isRecording]);
+
+  // 녹음 시간 타이머 + 무음 타임아웃 (30초)
+  useEffect(() => {
+    if (isRecording) {
+      setRecordingTime(0);
+      lastSpeechRef.current = Date.now();
+      recordingTimerRef.current = setInterval(() => {
+        setRecordingTime(prev => prev + 1);
+        if (lastSpeechRef.current && Date.now() - lastSpeechRef.current > 30000) {
+          showToast('음성이 없어 녹음을 종료합니다');
+          recognitionRef.current?.stop();
+          setIsRecording(false);
+          setInterimText('');
+        }
+      }, 1000);
+    } else {
+      setRecordingTime(0);
+      clearInterval(recordingTimerRef.current);
+    }
+    return () => clearInterval(recordingTimerRef.current);
   }, [isRecording]);
 
   const toggleRec = () => {
@@ -71,11 +122,14 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
     if (isRecording) {
       recognitionRef.current.stop();
       setIsRecording(false);
+      setInterimText('');
     } else {
       recognitionRef.current.start();
       setIsRecording(true);
     }
   };
+
+  const formatTime = (sec) => `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
 
   const handleAnalyze = async () => {
     if (!input.trim() || !auth.currentUser) return;
@@ -294,11 +348,18 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
 
       <div className="relative">
         <textarea
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          value={input + (interimText ? (input ? ' ' : '') + interimText : '')}
+          onChange={(e) => { if (!isRecording) setInput(e.target.value); }}
           placeholder="어젯밤의 무의식을 들려주세요..."
+          readOnly={isRecording}
           className="w-full h-[280px] sm:h-[350px] md:h-[400px] glass-panel rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 text-lg sm:text-2xl focus:outline-none focus:border-white/10 resize-none font-bold break-keep leading-relaxed text-white shadow-inner"
         />
+        {isRecording && (
+          <div className="absolute top-6 right-8 flex items-center gap-2">
+            <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+            <span className="text-red-400 text-sm font-mono font-bold">{formatTime(recordingTime)}</span>
+          </div>
+        )}
         <div className="absolute bottom-10 right-10 flex gap-4">
           <button
             onClick={toggleRec}
