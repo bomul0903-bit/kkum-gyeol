@@ -35,8 +35,6 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const recognitionRef = useRef(null);
   const lastSpeechRef = useRef(null);
   const recordingTimerRef = useRef(null);
-  const baseInputRef = useRef('');
-  const sessionTextRef = useRef('');
 
   useEffect(() => {
     let timer;
@@ -63,21 +61,23 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       rec.interimResults = true;
       rec.lang = 'ko-KR';
       rec.onresult = (e) => {
-        let sessionFinal = '';
+        let finalText = '';
         let interim = '';
-        for (let i = 0; i < e.results.length; ++i) {
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
           if (e.results[i].isFinal) {
-            sessionFinal += e.results[i][0].transcript;
+            finalText += e.results[i][0].transcript;
           } else {
             interim += e.results[i][0].transcript;
           }
         }
-        sessionTextRef.current = sessionFinal;
-        const base = baseInputRef.current;
-        const newInput = (base ? base + ' ' : '') + sessionFinal;
-        setInput(newInput);
-        setInterimText(interim);
-        lastSpeechRef.current = Date.now();
+        if (finalText) {
+          setInput(prev => (prev ? prev + ' ' : '') + finalText);
+          setInterimText('');
+          lastSpeechRef.current = Date.now();
+        } else {
+          setInterimText(interim);
+          lastSpeechRef.current = Date.now();
+        }
       };
       rec.onerror = (e) => {
         const messages = {
@@ -93,16 +93,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
         }
       };
       rec.onend = () => {
-        if (isRecordingRef.current) {
-          // 현재 세션 텍스트를 base에 반영
-          const base = baseInputRef.current;
-          const session = sessionTextRef.current;
-          if (session) {
-            baseInputRef.current = (base ? base + ' ' : '') + session;
-            sessionTextRef.current = '';
-          }
-          try { rec.start(); } catch (_) {}
-        }
+        if (isRecordingRef.current) rec.start();
       };
       recognitionRef.current = rec;
     }
@@ -139,8 +130,6 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
       setIsRecording(false);
       setInterimText('');
     } else {
-      baseInputRef.current = input;
-      sessionTextRef.current = '';
       recognitionRef.current.start();
       setIsRecording(true);
     }
