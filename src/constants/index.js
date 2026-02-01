@@ -1,15 +1,23 @@
 export const STATS_THRESHOLD = 7;
 
 export const AI_MODELS = [
-  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', label: '기본', model: 'gemini-2.5-flash-preview-09-2025' },
+  { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', label: '기본', model: 'gemini-2.5-flash' },
   { id: 'gemini-3-flash', name: 'Gemini 3 Flash', label: '최신', model: 'gemini-3-flash-preview' },
+  { id: 'gemini-3-pro', name: 'Gemini 3 Pro', label: '고급', model: 'gemini-3-pro' },
 ];
 
 export const IMAGE_MODELS = [
-  { id: 'imagen', name: 'Imagen 4', label: '기본', model: 'imagen-4.0-generate-001' },
-  { id: 'gemini-image', name: 'Gemini 3 Pro', label: '실험적', model: 'gemini-3-pro-image-preview' },
-  { id: 'both', name: '동시 비교', label: '2장', model: 'both' },
+  { id: 'gemini-2.5-flash-image', name: 'Gemini 2.5 Flash', label: '기본', model: 'gemini-2.5-flash-image', type: 'gemini' },
+  { id: 'imagen', name: 'Imagen 4', label: '안정적', model: 'imagen-4.0-generate-001', type: 'imagen' },
+  { id: 'gemini-3-pro-image', name: 'Gemini 3 Pro', label: '실험적', model: 'gemini-3-pro-image-preview', type: 'gemini' },
+  { id: 'both', name: '동시 비교', label: '2장', model: 'both', type: 'both' },
 ];
+
+// 기본 모델 참조 헬퍼
+export const DEFAULT_AI_MODEL = AI_MODELS[0].model;
+export const DEFAULT_IMAGE_MODEL = IMAGE_MODELS[0].model;
+export const IMAGEN_MODEL = IMAGE_MODELS.find(m => m.type === 'imagen').model;
+export const GEMINI_IMAGE_MODEL = IMAGE_MODELS.find(m => m.type === 'gemini').model;
 
 export const SUBCONSCIOUS_QUOTES = [
   "꿈은 무의식이라는 거대한 대륙에서 날아온 전갈이다.",

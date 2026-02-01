@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { AI_MODELS } from '@/constants';
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
@@ -27,7 +28,7 @@ const fetchWithRetry = async (url, options, retries = 5) => {
 export async function POST(request) {
   try {
     const { dreamText, model } = await request.json();
-    const modelName = model || 'gemini-2.5-flash-preview-09-2025';
+    const modelName = model || AI_MODELS[0].model;
 
     if (!dreamText) {
       return NextResponse.json({ error: 'dreamText is required' }, { status: 400 });
@@ -81,22 +82,45 @@ export async function POST(request) {
       required: ["title", "freudInterpretation", "generalInterpretation", "symbols", "scenes", "emotions"]
     };
 
-    const data = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: dreamText }] }],
-          systemInstruction: { parts: [{ text: systemInstruction }] },
-          generationConfig: { responseMimeType: "application/json", responseSchema: schema }
-        })
+    const requestBody = {
+      contents: [{ parts: [{ text: dreamText }] }],
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      generationConfig: { responseMimeType: "application/json", responseSchema: schema }
+    };
+
+    // 선택한 모델 먼저 시도, 실패 시 다른 모델로 폴백
+    const modelsToTry = [
+      modelName,
+      ...AI_MODELS.map(m => m.model).filter(m => m !== modelName)
+    ];
+
+    let lastError;
+    for (const tryModel of modelsToTry) {
+      try {
+        const data = await fetchWithRetry(
+          `https://generativelanguage.googleapis.com/v1beta/models/${tryModel}:generateContent?key=${apiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+          }
+        );
+
+        const result = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
+        const usedModel = AI_MODELS.find(m => m.model === tryModel);
+        return NextResponse.json({
+          ...result,
+          usedModel: usedModel?.name || tryModel,
+          fallback: tryModel !== modelName
+        });
+      } catch (err) {
+        console.warn(`Model ${tryModel} failed:`, err.message);
+        lastError = err;
       }
-    );
+    }
 
-    const result = JSON.parse(data.candidates?.[0]?.content?.parts?.[0]?.text);
-    return NextResponse.json(result);
-
+    console.error('All models failed:', lastError);
+    return NextResponse.json({ error: '꿈 분석 모델을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 });
   } catch (error) {
     console.error('Analyze dream error:', error);
     return NextResponse.json({ error: 'Failed to analyze dream' }, { status: 500 });
