@@ -6,7 +6,7 @@
 ## 기술 스택
 - **프레임워크**: Next.js 14+ (App Router)
 - **인증/DB**: Firebase (Auth, Firestore)
-- **AI**: Gemini API (gemini-2.5-flash), Imagen API (imagen-4.0-generate-001)
+- **AI**: Gemini API (gemini-2.5-flash, gemini-3-flash, gemini-3-pro), Imagen API (imagen-4.0-generate-001)
 - **SDK**: @google/genai
 - **배포**: Vercel (kkum-gyeol.vercel.app)
 
@@ -25,7 +25,7 @@ src/
 │       ├── RecordDreamView.jsx     # 꿈 기록 화면
 │       ├── StatsView.jsx           # 무의식 리포트 (5감정 레이더)
 │       └── ...
-├── constants/index.js              # ART_STYLES, SUBCONSCIOUS_QUOTES
+├── constants/index.js              # AI_MODELS, IMAGE_MODELS, ART_STYLES 등 중앙 관리
 ├── services/
 │   ├── api.js                      # API 호출 함수
 │   └── firebase.js                 # Firebase 설정
@@ -60,7 +60,26 @@ NEXT_PUBLIC_FIREBASE_APP_ID=
 - **이미지 생성**: 9가지 화풍 선택 가능
 - **무의식 리포트**: 7개 꿈 데이터 기반 레이더 차트
 
-## Imagen 모델 옵션
+## 모델 관리 (constants/index.js에서 중앙 관리)
+
+모든 모델명은 `src/constants/index.js`에서만 정의. 모델 변경 시 이 파일만 수정하면 전체 반영됨.
+
+### AI 분석 모델 (AI_MODELS)
+- `gemini-2.5-flash` (기본)
+- `gemini-3-flash-preview` (최신)
+- `gemini-3-pro` (고급)
+
+### 이미지 생성 모델 (IMAGE_MODELS)
+- `gemini-2.5-flash-image` (기본, type: gemini)
+- `imagen-4.0-generate-001` (안정적, type: imagen)
+- `gemini-3-pro-image-preview` (실험적, type: gemini)
+- `both` (동시 비교)
+
+### Imagen 모델 옵션
 - `imagen-4.0-generate-001` (현재 사용)
 - `imagen-4.0-ultra-generate-001` (고품질)
 - `imagen-4.0-fast-generate-001` (빠른 생성)
+
+### 자동 폴백
+- 분석 API: 선택 모델 실패 시 AI_MODELS의 다른 모델로 순차 폴백
+- 이미지 API: Gemini↔Imagen 양방향 자동 폴백
