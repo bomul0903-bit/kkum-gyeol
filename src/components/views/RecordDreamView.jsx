@@ -101,12 +101,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
             baseInputRef.current = (base ? base + ' ' : '') + session;
             sessionTextRef.current = '';
           }
-          // Android에서 권한 재요구 방지를 위한 딜레이
-          setTimeout(() => {
-            if (isRecordingRef.current) {
-              try { rec.start(); } catch (_) {}
-            }
-          }, 300);
+          try { rec.start(); } catch (_) {}
         }
       };
       recognitionRef.current = rec;
