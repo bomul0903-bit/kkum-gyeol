@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
+import { IMAGE_MODELS, IMAGEN_MODEL, GEMINI_IMAGE_MODEL } from '@/constants';
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
@@ -20,6 +21,43 @@ const fetchWithRetry = async (url, options, retries = 3) => {
   }
 };
 
+// Gemini 이미지 생성 (REST API)
+async function generateWithGemini(model, prompt, negativePrompt, apiKey) {
+  const geminiPrompt = negativePrompt
+    ? `${prompt}. (IMPORTANT: Avoid the following styles or elements: ${negativePrompt})`
+    : prompt;
+
+  const data = await fetchWithRetry(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `Create an artistic masterpiece for this dream: ${geminiPrompt}.` }] }],
+        generationConfig: { responseModalities: ['IMAGE'] }
+      })
+    }
+  );
+
+  const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+  if (!b64) throw new Error('No image data in response');
+  return `data:image/png;base64,${b64}`;
+}
+
+// Imagen 이미지 생성 (@google/genai SDK)
+async function generateWithImagen(model, prompt, apiKey) {
+  const ai = new GoogleGenAI({ apiKey });
+  const response = await ai.models.generateImages({
+    model,
+    prompt,
+    config: { numberOfImages: 1 },
+  });
+
+  const imageBytes = response.generatedImages?.[0]?.image?.imageBytes;
+  if (!imageBytes) throw new Error('No image data in response');
+  return `data:image/png;base64,${imageBytes}`;
+}
+
 export async function POST(request) {
   try {
     const { prompt, negativePrompt, imageModel } = await request.json();
@@ -34,89 +72,44 @@ export async function POST(request) {
       return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
     }
 
-    // Gemini Image 모델 선택 시
-    if (imageModel === 'gemini-3-pro-image-preview') {
+    const modelConfig = IMAGE_MODELS.find(m => m.model === imageModel);
+    const isGeminiType = modelConfig?.type === 'gemini';
+
+    if (isGeminiType) {
+      // Gemini 이미지 모델 → 실패 시 Imagen 폴백
       try {
-        const geminiPrompt = negativePrompt
-          ? `${prompt}. (IMPORTANT: Avoid the following styles or elements: ${negativePrompt})`
-          : prompt;
-
-        const data = await fetchWithRetry(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key=${apiKey}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: `Create an artistic masterpiece for this dream: ${geminiPrompt}.` }] }],
-              generationConfig: { responseModalities: ['IMAGE'] }
-            })
-          }
-        );
-
-        const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-        if (b64) {
-          return NextResponse.json({
-            imageUrl: `data:image/png;base64,${b64}`
-          });
-        }
+        const imageUrl = await generateWithGemini(imageModel, prompt, negativePrompt, apiKey);
+        return NextResponse.json({ imageUrl });
       } catch (e) {
-        console.error("Gemini image generation failed.", e);
+        console.warn(`Gemini image model (${imageModel}) failed, falling back to Imagen:`, e.message);
       }
-      return NextResponse.json({ error: 'Image generation failed' }, { status: 500 });
+
+      try {
+        const imageUrl = await generateWithImagen(IMAGEN_MODEL, prompt, apiKey);
+        return NextResponse.json({ imageUrl, fallback: true });
+      } catch (e) {
+        console.error('Imagen fallback also failed:', e.message);
+      }
+
+      return NextResponse.json({ error: '이미지 생성 모델을 사용할 수 없습니다' }, { status: 500 });
     }
 
-    // 1. Imagen 4.0 (Primary) - @google/genai SDK (기본)
+    // Imagen 모델 (기본) → 실패 시 Gemini 폴백
     try {
-      const ai = new GoogleGenAI({ apiKey });
-
-      const response = await ai.models.generateImages({
-        model: 'imagen-4.0-generate-001',
-        prompt,
-        config: {
-          numberOfImages: 1,
-        },
-      });
-
-      const imageBytes = response.generatedImages?.[0]?.image?.imageBytes;
-
-      if (imageBytes) {
-        return NextResponse.json({
-          imageUrl: `data:image/png;base64,${imageBytes}`
-        });
-      }
+      const imageUrl = await generateWithImagen(imageModel || IMAGEN_MODEL, prompt, apiKey);
+      return NextResponse.json({ imageUrl });
     } catch (err) {
-      console.warn("Imagen fallback...", err);
+      console.warn(`Imagen (${imageModel}) failed, falling back to Gemini:`, err.message);
     }
 
-    // 2. Gemini Flash Image (Fallback)
     try {
-      const fallbackPrompt = negativePrompt
-        ? `${prompt}. (IMPORTANT: Avoid the following styles or elements: ${negativePrompt})`
-        : prompt;
-
-      const data = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `Create an artistic masterpiece for this dream: ${fallbackPrompt}.` }] }],
-            generationConfig: { responseModalities: ['TEXT', 'IMAGE'] }
-          })
-        }
-      );
-
-      const b64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
-      if (b64) {
-        return NextResponse.json({
-          imageUrl: `data:image/png;base64,${b64}`
-        });
-      }
+      const imageUrl = await generateWithGemini(GEMINI_IMAGE_MODEL, prompt, negativePrompt, apiKey);
+      return NextResponse.json({ imageUrl, fallback: true });
     } catch (e) {
-      console.error("Image generation failed.", e);
+      console.error('Gemini fallback also failed:', e.message);
     }
 
-    return NextResponse.json({ error: 'Image generation failed' }, { status: 500 });
+    return NextResponse.json({ error: '이미지 생성 모델을 사용할 수 없습니다' }, { status: 500 });
 
   } catch (error) {
     console.error('Generate image error:', error);

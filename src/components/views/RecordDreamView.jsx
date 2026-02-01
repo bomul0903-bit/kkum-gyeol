@@ -15,7 +15,7 @@ import {
   Settings
 } from 'lucide-react';
 import { KkumGyeolLogo } from '../common';
-import { ART_STYLES, AI_MODELS, IMAGE_MODELS, SUBCONSCIOUS_QUOTES } from '@/constants';
+import { ART_STYLES, AI_MODELS, IMAGE_MODELS, SUBCONSCIOUS_QUOTES, DEFAULT_IMAGE_MODEL, IMAGEN_MODEL, GEMINI_IMAGE_MODEL } from '@/constants';
 import { compressImage } from '@/lib/utils';
 import { saveDream, saveScene, auth } from '@/services/firebase';
 import { analyzeDream, generateImage } from '@/services/api';
@@ -27,7 +27,7 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [interimText, setInterimText] = useState('');
   const [recordingTime, setRecordingTime] = useState(0);
   const [currentModel, setCurrentModel] = useState(AI_MODELS[1].model);
-  const [currentImageModel, setCurrentImageModel] = useState('gemini-3-pro-image-preview');
+  const [currentImageModel, setCurrentImageModel] = useState(DEFAULT_IMAGE_MODEL);
   const [showModelPanel, setShowModelPanel] = useState(false);
   const [phase, setPhase] = useState('input');
   const [result, setResult] = useState(null);
@@ -170,8 +170,8 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
 
       if (currentImageModel === 'both') {
         const [rawImagen, rawGemini] = await Promise.all([
-          generateImage(finalPrompt, finalNegative, 'imagen-4.0-generate-001').catch(() => 'error'),
-          generateImage(finalPrompt, finalNegative, 'gemini-3-pro-image-preview').catch(() => 'error'),
+          generateImage(finalPrompt, finalNegative, IMAGEN_MODEL).catch(() => 'error'),
+          generateImage(finalPrompt, finalNegative, GEMINI_IMAGE_MODEL).catch(() => 'error'),
         ]);
         const compImagen = rawImagen !== 'error' ? await compressImage(rawImagen, 800) : 'error';
         const compGemini = rawGemini !== 'error' ? await compressImage(rawGemini, 800) : 'error';
@@ -198,7 +198,10 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
     } catch (err) {
       console.error(err);
       setPhase('input');
-      showToast("오류 발생");
+      const msg = err.message?.includes('model')
+        ? '현재 선택한 모델을 사용할 수 없습니다. 다른 모델로 시도해주세요.'
+        : '오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
+      showToast(msg);
     }
   };
 
