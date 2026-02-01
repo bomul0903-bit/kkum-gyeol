@@ -8,6 +8,7 @@ import {
   Mic,
   MicOff,
   Send,
+  PenLine,
   Lightbulb,
   BrainCircuit,
   ScrollText,
@@ -26,12 +27,13 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
   const [isRecording, setIsRecording] = useState(false);
   const [interimText, setInterimText] = useState('');
   const [recordingTime, setRecordingTime] = useState(0);
-  const [currentModel, setCurrentModel] = useState(AI_MODELS[1].model);
+  const [currentModel, setCurrentModel] = useState(AI_MODELS[0].model);
   const [currentImageModel, setCurrentImageModel] = useState(DEFAULT_IMAGE_MODEL);
   const [showModelPanel, setShowModelPanel] = useState(false);
   const [phase, setPhase] = useState('input');
   const [result, setResult] = useState(null);
   const [quoteIdx, setQuoteIdx] = useState(Math.floor(Math.random() * SUBCONSCIOUS_QUOTES.length));
+  const [showTextInput, setShowTextInput] = useState(false);
   const recognitionRef = useRef(null);
   const lastSpeechRef = useRef(null);
   const recordingTimerRef = useRef(null);
@@ -355,36 +357,69 @@ export default function RecordDreamView({ profile, onBack, showToast }) {
         </div>
       </div>
 
-      <div className="relative">
-        <textarea
-          value={input + (interimText ? (input ? ' ' : '') + interimText : '')}
-          onChange={(e) => { if (!isRecording) setInput(e.target.value); }}
-          placeholder="어젯밤의 무의식을 들려주세요..."
-          readOnly={isRecording}
-          className="w-full h-[280px] sm:h-[350px] md:h-[400px] glass-panel rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 text-lg sm:text-2xl focus:outline-none focus:border-white/10 resize-none font-bold break-keep leading-relaxed text-white shadow-inner"
-        />
-        {isRecording && (
-          <div className="absolute top-6 right-8 flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
-            <span className="text-red-400 text-sm font-mono font-bold">{formatTime(recordingTime)}</span>
+      {showTextInput ? (
+        <div className="relative">
+          <textarea
+            value={input + (interimText ? (input ? ' ' : '') + interimText : '')}
+            onChange={(e) => { if (!isRecording) setInput(e.target.value); }}
+            placeholder="어젯밤의 무의식을 들려주세요..."
+            readOnly={isRecording}
+            autoFocus
+            className="w-full h-[280px] sm:h-[350px] md:h-[400px] glass-panel rounded-[2.5rem] sm:rounded-[3.5rem] p-6 sm:p-10 text-lg sm:text-2xl focus:outline-none focus:border-white/10 resize-none font-bold break-keep leading-relaxed text-white shadow-inner"
+          />
+          {isRecording && (
+            <div className="absolute top-6 right-8 flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-red-400 text-sm font-mono font-bold">{formatTime(recordingTime)}</span>
+            </div>
+          )}
+          <div className="absolute bottom-10 right-10 flex gap-4">
+            <button
+              onClick={() => setShowTextInput(false)}
+              className="p-6 glass-panel rounded-full text-indigo-200 transition-all shadow-xl"
+            >
+              <Mic className="w-6 h-6" />
+            </button>
+            <button
+              onClick={handleAnalyze}
+              disabled={!input.trim()}
+              className="p-6 bg-white text-black rounded-full shadow-2xl active:scale-90 disabled:opacity-20"
+            >
+              <Send className="w-6 h-6" />
+            </button>
           </div>
-        )}
-        <div className="absolute bottom-10 right-10 flex gap-4">
-          <button
-            onClick={toggleRec}
-            className={`p-6 rounded-full transition-all shadow-xl ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'glass-panel text-indigo-200'}`}
-          >
-            {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
-          </button>
-          <button
-            onClick={handleAnalyze}
-            disabled={!input.trim() || isRecording}
-            className="p-6 bg-white text-black rounded-full shadow-2xl active:scale-90 disabled:opacity-20"
-          >
-            <Send className="w-6 h-6" />
-          </button>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col items-center gap-6">
+          {isRecording && (
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse" />
+              <span className="text-red-400 text-sm font-mono font-bold">{formatTime(recordingTime)}</span>
+            </div>
+          )}
+          <div className="flex gap-4">
+            <button
+              onClick={() => setShowTextInput(true)}
+              className="p-6 glass-panel rounded-full text-indigo-200 transition-all shadow-xl"
+            >
+              <PenLine className="w-6 h-6" />
+            </button>
+            <button
+              onClick={toggleRec}
+              className={`p-6 rounded-full transition-all shadow-xl ${isRecording ? 'bg-red-500 text-white animate-pulse' : 'glass-panel text-indigo-200'}`}
+            >
+              {isRecording ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            </button>
+            <button
+              onClick={handleAnalyze}
+              disabled={!input.trim() || isRecording}
+              className="p-6 bg-white text-black rounded-full shadow-2xl active:scale-90 disabled:opacity-20"
+            >
+              <Send className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
